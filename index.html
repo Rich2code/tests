@@ -3,55 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save Text Across Devices with Firebase</title>
+  <title>User Page</title>
 </head>
 <body>
 
-  <h1>Save Text Across Devices</h1>
-
-  <textarea id="myTextArea" placeholder="Type something here..." rows="10" cols="50"></textarea><br><br>
-  <button onclick="saveToFirebase()">Save</button>
-  <button onclick="clearFirebase()">Clear</button>
-
+  <h1>User Page</h1>
+  <p>Your IP Address is being saved...</p>
+  
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-
+  
   <script>
-    // Your Firebase Configuration (Replace with your own Firebase config)
+    // Your Firebase Configuration
     var firebaseConfig = {
-    apiKey: "AIzaSyCIH4PKs8KjlC74B21Lw5AuDM2TjUVdK94",
-    authDomain: "tests-8abd2.firebaseapp.com",
-    databaseURL: "https://tests-8abd2-default-rtdb.firebaseio.com",
-    projectId: "tests-8abd2",
-    storageBucket: "tests-8abd2.appspot.com",
-    messagingSenderId: "269771578530",
-    appId: "1:269771578530:web:f05f2db6786b88caca8bfb",
-    measurementId: "G-0G0JQ8H4QS"
+      apiKey: "AIzaSyCIH4PKs8KjlC74B21Lw5AuDM2TjUVdK94",
+      authDomain: "tests-8abd2.firebaseapp.com",
+      databaseURL: "https://tests-8abd2-default-rtdb.firebaseio.com",
+      projectId: "tests-8abd2",
+      storageBucket: "tests-8abd2.appspot.com",
+      messagingSenderId: "269771578530",
+      appId: "1:269771578530:web:f05f2db6786b88caca8bfb",
+      measurementId: "G-0G0JQ8H4QS"
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    // Function to save data to Firebase Realtime Database
-    function saveToFirebase() {
-      const text = document.getElementById('myTextArea').value;
-      firebase.database().ref('textData').set({ text: text });
-      alert('Data saved to Firebase!');
+    // Function to save the IP address to Firebase
+    function saveIpToFirebase(ip) {
+      const timestamp = new Date().toISOString();
+      firebase.database().ref('userIPs').push({ ip: ip, timestamp: timestamp });
+      alert('Your IP address (' + ip + ') has been saved!');
     }
 
-    // Function to clear data from Firebase
-    function clearFirebase() {
-      firebase.database().ref('textData').remove();
-      document.getElementById('myTextArea').value = '';
-      alert('Data cleared from Firebase!');
-    }
-
-    // Retrieve data from Firebase on page load and set it in the textarea
-    firebase.database().ref('textData').on('value', (snapshot) => {
-      if (snapshot.val()) {
-        document.getElementById('myTextArea').value = snapshot.val().text;
-      }
-    });
+    // Fetch the user's public IP address using ipify API
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => {
+        saveIpToFirebase(data.ip);
+      })
+      .catch(error => console.error('Error fetching IP address:', error));
   </script>
 
 </body>
