@@ -10,6 +10,7 @@
   <h1>Admin Page</h1>
   <h2>List of User IP Addresses</h2>
   <ul id="ipList"></ul>
+  <button onclick="clearAllIps()">Clear All IPs</button> <!-- Clear button -->
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -36,12 +37,27 @@
       firebase.database().ref('userIPs').on('value', (snapshot) => {
         ipList.innerHTML = ''; // Clear list
         const data = snapshot.val();
-        for (const key in data) {
-          const listItem = document.createElement('li');
-          listItem.textContent = `IP: ${data[key].ip}, Timestamp: ${data[key].timestamp}`;
-          ipList.appendChild(listItem);
+        if (data) {
+          for (const key in data) {
+            const listItem = document.createElement('li');
+            listItem.textContent = `IP: ${data[key].ip}, Timestamp: ${data[key].timestamp}`;
+            ipList.appendChild(listItem);
+          }
+        } else {
+          ipList.innerHTML = '<li>No IP addresses saved.</li>'; // Message when no IPs are found
         }
       });
+    }
+
+    // Function to clear all IP addresses from Firebase
+    function clearAllIps() {
+      firebase.database().ref('userIPs').remove()
+        .then(() => {
+          alert('All IP addresses cleared!');
+        })
+        .catch((error) => {
+          console.error('Error clearing IP addresses:', error);
+        });
     }
 
     // Load all IPs when the page loads
