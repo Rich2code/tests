@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Textarea Save with LocalStorage</title>
+</head>
+<body>
+  
+  <h1>Save Text Locally</h1>
+  
+  <textarea id="myTextArea" placeholder="Type something here..." rows="10" cols="50"></textarea><br><br>
+  
+  <button onclick="saveData()">Save</button>
+  <button onclick="clearData()">Clear</button>
+  
+  <script>
+    // Function to save data from the textarea to localStorage
+    function saveData() {
+      const text = document.getElementById('myTextArea').value;
+      localStorage.setItem('textData', text);
+      alert('Data saved locally!');
+    }
+
+    // Function to clear the textarea and localStorage data
+    function clearData() {
+      document.getElementById('myTextArea').value = '';
+      localStorage.removeItem('textData');
+      alert('Data cleared!');
+    }
+
+    // On page load, retrieve the data from localStorage if it exists
+    window.onload = function() {
+      const savedText = localStorage.getItem('textData');
+      if (savedText) {
+        document.getElementById('myTextArea').value = savedText;
+      }
+    };
+  </script>
+
+</body>
+</html>
