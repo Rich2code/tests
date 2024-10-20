@@ -52,6 +52,7 @@
             color: #000;
             font-family: 'Arial', sans-serif;
             margin: 0;
+            overflow: hidden; /* Disable scrolling */
         }
 
         .tetris {
@@ -66,6 +67,7 @@
             grid-template-columns: repeat(10, 30px);
             gap: 1px;
             background: #ccc;
+            margin-bottom: 10px;
         }
 
         .grid div {
@@ -79,33 +81,19 @@
             background-color: #000 !important;
         }
 
-        .score, .next-shape-container {
-            margin-top: 20px;
+        .score {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px; /* Limit the width for better responsiveness */
+            align-items: center;
+            margin-bottom: 10px;
         }
 
-        .next-shape-container {
-            padding: 10px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-
-        .next-shape {
-            display: grid;
-            grid-template-rows: repeat(4, 30px);
-            grid-template-columns: repeat(4, 30px);
-            gap: 1px;
-            margin-top: 10px;
-        }
-
-        .next-shape div {
-            width: 30px;
-            height: 30px;
-            background: #fff;
-            border: 1px solid #ccc;
+        .turn-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px; /* Space between score and button */
         }
 
         .game-over {
@@ -140,18 +128,8 @@
             </script>
         </div>
         <div class="score">
-            <h3>Score: <span id="score">0</span></h3>
-        </div>
-        <div class="next-shape-container">
-            <h3>Next Shape:</h3>
-            <div class="next-shape">
-                <!-- Generate 16 divs for the next shape display (4 columns * 4 rows) -->
-                <script>
-                    for (let i = 0; i < 16; i++) {
-                        document.write('<div></div>');
-                    }
-                </script>
-            </div>
+            <h3>SCORE: <span id="score">0</span></h3>
+            <button class="turn-button" id="turn-button">Turn</button>
         </div>
     </div>
     <div class="game-over" id="game-over">
@@ -163,7 +141,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const grid = document.querySelector('.grid');
             const scoreDisplay = document.getElementById('score');
-            const nextShapeDisplay = document.querySelectorAll('.next-shape div');
             const gameOverDisplay = document.getElementById('game-over');
             const width = 10;
             let score = 0;
@@ -173,38 +150,38 @@
 
             // The Tetrominoes
             const lTetromino = [
-                [1, width+1, width*2+1, 2],
-                [width, width+1, width+2, width*2+2],
-                [1, width+1, width*2+1, width*2],
-                [width, width*2, width*2+1, width*2+2]
+                [1, width + 1, width * 2 + 1, 2],
+                [width, width + 1, width + 2, width * 2 + 2],
+                [1, width + 1, width * 2 + 1, width * 2],
+                [width, width * 2, width * 2 + 1, width * 2 + 2]
             ];
 
             const zTetromino = [
-                [0,width,width+1,width*2+1],
-                [width+1,width+2,width*2,width*2+1],
-                [0,width,width+1,width*2+1],
-                [width+1,width+2,width*2,width*2+1]
+                [0, width, width + 1, width * 2 + 1],
+                [width + 1, width + 2, width * 2, width * 2 + 1],
+                [0, width, width + 1, width * 2 + 1],
+                [width + 1, width + 2, width * 2, width * 2 + 1]
             ];
 
             const tTetromino = [
-                [1,width,width+1,width+2],
-                [1,width+1,width+2,width*2+1],
-                [width,width+1,width+2,width*2+1],
-                [1,width,width+1,width*2+1]
+                [1, width, width + 1, width + 2],
+                [1, width + 1, width + 2, width * 2 + 1],
+                [width, width + 1, width + 2, width * 2 + 1],
+                [1, width, width + 1, width * 2 + 1]
             ];
 
             const oTetromino = [
-                [0,1,width,width+1],
-                [0,1,width,width+1],
-                [0,1,width,width+1],
-                [0,1,width,width+1]
+                [0, 1, width, width + 1],
+                [0, 1, width, width + 1],
+                [0, 1, width, width + 1],
+                [0, 1, width, width + 1]
             ];
 
             const iTetromino = [
-                [1,width+1,width*2+1,width*3+1],
-                [width,width+1,width+2,width+3],
-                [1,width+1,width*2+1,width*3+1],
-                [width,width+1,width+2,width+3]
+                [1, width + 1, width * 2 + 1, width * 3 + 1],
+                [width, width + 1, width + 2, width + 3],
+                [1, width + 1, width * 2 + 1, width * 3 + 1],
+                [width, width + 1, width + 2, width + 3]
             ];
 
             const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino];
@@ -231,16 +208,6 @@
                 });
             }
 
-            // Display the shape in the mini-grid display
-            function displayShape() {
-                nextShapeDisplay.forEach(square => {
-                    square.style.backgroundColor = '';
-                });
-                theTetrominoes[nextRandom][0].forEach(index => {
-                    nextShapeDisplay[index].style.backgroundColor = colors[nextRandom];
-                });
-            }
-
             // Make the Tetromino move down every second
             timerId = setInterval(moveDown, 1000);
 
@@ -259,13 +226,12 @@
                         squares[currentPosition + index].classList.add('taken');
                         squares[currentPosition + index].style.backgroundColor = colors[random];
                     });
-                    // Start a new tetromino falling
+                    // Start a new Tetromino falling
                     random = nextRandom;
                     nextRandom = Math.floor(Math.random() * theTetrominoes.length);
                     current = theTetrominoes[random][currentRotation];
                     currentPosition = 4;
                     draw();
-                    displayShape();
                     addScore();
                     gameOver();
                 }
@@ -303,32 +269,17 @@
             function rotate() {
                 undraw();
                 currentRotation++;
-                if (currentRotation === current.length) { // If current rotation gets to 4, make it go back to 0
+                if (currentRotation === current.length) {
                     currentRotation = 0;
                 }
                 current = theTetrominoes[random][currentRotation];
                 draw();
             }
 
-            // Assign functions to keycodes
-            function control(e) {
-                if (e.keyCode === 37) {
-                    moveLeft();
-                } else if (e.keyCode === 38) {
-                    rotate();
-                } else if (e.keyCode === 39) {
-                    moveRight();
-                } else if (e.keyCode === 40) {
-                    moveDown();
-                }
-            }
-            document.addEventListener('keydown', control);
-
             // Add score
             function addScore() {
                 for (let i = 0; i < 199; i += width) {
-                    const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9];
-
+                    const row = Array.from({ length: width }, (_, j) => i + j);
                     if (row.every(index => squares[index].classList.contains('taken'))) {
                         score += 10;
                         scoreDisplay.innerHTML = score;
@@ -343,7 +294,7 @@
                 }
             }
 
-            // Game over
+            // Game over function
             function gameOver() {
                 if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
                     clearInterval(timerId);
@@ -351,8 +302,40 @@
                 }
             }
 
-            draw();
-            displayShape();
+            // Control the Tetromino
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    moveLeft();
+                } else if (e.key === 'ArrowRight') {
+                    moveRight();
+                } else if (e.key === 'ArrowUp') {
+                    rotate();
+                }
+            });
+
+            // Button to turn the Tetromino
+            document.getElementById('turn-button').addEventListener('click', rotate);
+
+            // Swipe controls for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            const handleSwipe = () => {
+                if (touchEndX < touchStartX) {
+                    moveLeft(); // Swipe left
+                } else if (touchEndX > touchStartX) {
+                    moveRight(); // Swipe right
+                }
+            };
+
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
         });
     </script>
 </body>
