@@ -34,8 +34,9 @@
 
         // Update mouse position for hover effect
         document.addEventListener('mousemove', (e) => {
-            document.body.style.setProperty('--x', `${e.clientX}px`);
-            document.body.style.setProperty('--y', `${e.clientY}px`);
+            const hoverEffect = document.querySelector('.hover-effect');
+            hoverEffect.style.left = `${e.clientX}px`;
+            hoverEffect.style.top = `${e.clientY}px`;
         });
     </script>
     <meta charset="UTF-8">
@@ -63,23 +64,22 @@
             transition: background 0.5s ease; /* Smooth transition for background */
         }
 
-        /* Create a hover area */
-        body::before {
-            content: '';
+        /* Hover effect */
+        .hover-effect {
             position: absolute;
-            top: var(--y);
-            left: var(--x);
-            width: 300px; /* Define hover effect radius */
-            height: 300px;
+            width: 200px; /* Define hover effect radius */
+            height: 200px;
             border-radius: 50%;
             background: radial-gradient(circle, transparent 70%, rgba(255, 255, 255, 0.8) 100%);
             transform: translate(-50%, -50%); /* Center the effect */
             transition: background 0.5s ease; /* Smooth transition */
             pointer-events: none; /* Ensure it's non-interactive */
+            opacity: 0; /* Start invisible */
         }
 
-        body:hover::before {
+        body:hover .hover-effect {
             background: radial-gradient(circle, rgba(0, 255, 252, 0.7) 0%, transparent 70%);
+            opacity: 1; /* Show on hover */
         }
 
         .container {
@@ -272,37 +272,38 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="login-box">
-        <h2>Login</h2>
-        <form action="#">
-            <div class="input-box">
-                <input type="email" required>
-                <label>Email</label>
-            </div>
-            <div class="input-box">
-                <input type="password" required>
-                <label>Password</label>
-            </div>
-            <div class="forgot-password">
-                <a href="#">Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn">Login</button>
-            <div class="signup-link">
-                <span>Don't have an account? <a href="#">Signup</a></span>
-            </div>
-        </form>
+    <div class="hover-effect"></div> <!-- Add hover effect div here -->
+    <div class="container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-box">
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button class="btn">Login</button>
+                <div class="signup-link">
+                    <span>Don't have an account? <a href="#">Signup</a></span>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<a class="meta-link" id="source-link" href="https://github.com/c0d3t0wn" target="_blank">
-    <i class="fas fa-code"></i>
-    <span>Source Code</span>
-</a>
+    <a class="meta-link" id="source-link" href="https://github.com/c0d3t0wn" target="_blank">
+        <i class="fas fa-code"></i>
+        <span>Source Code</span>
+    </a>
 
-<a class="meta-link" id="yt-link" href="https://www.youtube.com/channel/UClu_oEXr1At4D9BlxD2vH2g" target="_blank">
-    <i class="fab fa-youtube"></i>
-    <span>YouTube Channel</span>
-</a>
+    <a class="meta-link" id="yt-link" href="https://www.youtube.com/channel/UClu_oEXr1At4D9BlxD2vH2g" target="_blank">
+        <i class="fab fa-youtube"></i>
+        <span>YouTube Channel</span>
+    </a>
 </body>
 </html>
