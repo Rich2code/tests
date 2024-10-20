@@ -5,18 +5,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Page</title>
   <style>
-    /* Simple color coding for the display */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    h2 {
+      margin-top: 10px;
+      font-size: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #ipList {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #ipList li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #ipList li:last-child {
+      border-bottom: none;
+    }
+
     .ip { color: blue; font-weight: bold; }
     .time { color: green; font-weight: bold; }
     .date { color: red; font-weight: bold; }
+
+    button {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #c82333;
+    }
+
+    @media (max-width: 600px) {
+      h1, h2 {
+        font-size: 18px;
+      }
+
+      #ipList li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      button {
+        width: 100%;
+      }
+    }
+
+    /* Error message style */
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Admin Page</h1>
-  <h2>List of User IP Addresses</h2>
-  <ul id="ipList"></ul>
-  <button onclick="clearAllIps()">Clear All IPs</button> <!-- Clear button -->
+  <header>
+    <h1>Admin Page</h1>
+    <h2>List of User IP Addresses</h2>
+  </header>
+  
+  <div class="container">
+    <ul id="ipList"></ul>
+    <button onclick="clearAllIps()">Clear All IPs</button> <!-- Clear button -->
+  </div>
+  
+  <div class="error-message" id="errorMessage" style="display: none;"></div> <!-- Error message div -->
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -36,6 +129,19 @@
     };
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+
+    // Function to prompt for PIN and check it
+    function checkPin() {
+      const pin = prompt("Enter the PIN to access the Admin Page:");
+      const correctPin = "33214"; // Define the correct PIN
+      if (pin !== correctPin) {
+        document.getElementById("errorMessage").innerText = "Incorrect PIN. Access Denied.";
+        document.getElementById("errorMessage").style.display = "block";
+        document.body.innerHTML = ""; // Clear the body to remove all content
+        return false;
+      }
+      return true; // PIN is correct
+    }
 
     // Function to display all saved IP addresses from Firebase
     function displayIps() {
@@ -90,9 +196,11 @@
         });
     }
 
-    // Load all IPs when the page loads
+    // Load all IPs when the page loads, after checking PIN
     window.onload = function() {
-      displayIps();
+      if (checkPin()) {
+        displayIps();
+      }
     };
   </script>
 
