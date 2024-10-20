@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+  document.body.addEventListener('mousemove', function(e) {
+    let x = e.clientX / window.innerWidth * 100;
+    let y = e.clientY / window.innerHeight * 100;
+    
+    document.body.style.setProperty('--x', `${x}%`);
+    document.body.style.setProperty('--y', `${y}%`);
+  });
+</script>
+
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
