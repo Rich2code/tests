@@ -61,17 +61,59 @@
     .date { color: red; font-weight: bold; }
 
     button {
-      background-color: #dc3545;
+      background-color: #007bff;
       color: white;
       border: none;
       padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
+      margin: 5px;
     }
 
     button:hover {
-      background-color: #c82333;
+      background-color: #0056b3;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .key {
+      padding: 20px;
+      background-color: #007bff;
+      color: white;
+      font-size: 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-align: center;
+    }
+
+    .key:hover {
+      background-color: #0056b3;
+    }
+
+    .key:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .pin-display {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    /* Error message style */
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
     }
 
     @media (max-width: 600px) {
@@ -87,14 +129,12 @@
       button {
         width: 100%;
       }
+
+      .key {
+        font-size: 20px;
+      }
     }
 
-    /* Error message style */
-    .error-message {
-      color: red;
-      text-align: center;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -106,10 +146,29 @@
   
   <div class="container">
     <ul id="ipList"></ul>
-    <button onclick="clearAllIps()">Clear All IPs</button> <!-- Clear button -->
+    <button onclick="promptClearIps()">Clear All IPs</button> <!-- Clear button -->
   </div>
   
   <div class="error-message" id="errorMessage" style="display: none;"></div> <!-- Error message div -->
+  
+  <!-- Keypad modal -->
+  <div id="keypadModal" style="display: none;">
+    <div class="pin-display" id="pinDisplay">ENTER PIN:</div>
+    <div class="keypad">
+      <button class="key" onclick="appendDigit('1')">1</button>
+      <button class="key" onclick="appendDigit('2')">2</button>
+      <button class="key" onclick="appendDigit('3')">3</button>
+      <button class="key" onclick="appendDigit('4')">4</button>
+      <button class="key" onclick="appendDigit('5')">5</button>
+      <button class="key" onclick="appendDigit('6')">6</button>
+      <button class="key" onclick="appendDigit('7')">7</button>
+      <button class="key" onclick="appendDigit('8')">8</button>
+      <button class="key" onclick="appendDigit('9')">9</button>
+      <button class="key" onclick="appendDigit('0')">0</button>
+      <button class="key" onclick="clearPin()">Clear</button>
+      <button class="key" onclick="submitPin()">Enter</button>
+    </div>
+  </div>
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -130,17 +189,46 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    // Function to prompt for PIN and check it
-    function checkPin() {
-      const pin = prompt("Enter the PIN to access the Admin Page:");
-      const correctPin = "33214"; // Define the correct PIN
-      if (pin !== correctPin) {
-        document.getElementById("errorMessage").innerText = "Incorrect PIN. Access Denied.";
-        document.getElementById("errorMessage").style.display = "block";
-        document.body.innerHTML = ""; // Clear the body to remove all content
-        return false;
+    let currentPin = '';
+    const correctPin = "33214"; // Define the correct PIN
+
+    // Function to show the keypad
+    function showKeypad(callback) {
+      document.getElementById('keypadModal').style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+      currentPin = '';
+      document.getElementById('pinDisplay').innerText = 'ENTER PIN:';
+      if (callback) {
+        window.pinCallback = callback;
       }
-      return true; // PIN is correct
+    }
+
+    // Function to append digit to the current PIN
+    function appendDigit(digit) {
+      if (currentPin.length < 5) {
+        currentPin += digit;
+        document.getElementById('pinDisplay').innerText = 'ENTER PIN: ' + currentPin;
+      }
+    }
+
+    // Function to clear the current PIN
+    function clearPin() {
+      currentPin = '';
+      document.getElementById('pinDisplay').innerText = 'ENTER PIN:';
+    }
+
+    // Function to submit the PIN
+    function submitPin() {
+      if (currentPin === correctPin) {
+        document.getElementById('keypadModal').style.display = 'none';
+        if (window.pinCallback) {
+          window.pinCallback(); // Call the callback if provided
+        }
+      } else {
+        document.getElementById('errorMessage').innerText = "Incorrect PIN. Access Denied.";
+        document.getElementById('errorMessage').style.display = 'block';
+        clearPin(); // Clear the PIN after incorrect attempt
+      }
     }
 
     // Function to display all saved IP addresses from Firebase
@@ -196,11 +284,18 @@
         });
     }
 
+    // Function to prompt for PIN before clearing IPs
+    function promptClearIps() {
+      showKeypad(() => {
+        clearAllIps();
+      });
+    }
+
     // Load all IPs when the page loads, after checking PIN
     window.onload = function() {
-      if (checkPin()) {
+      showKeypad(() => {
         displayIps();
-      }
+      });
     };
   </script>
 
