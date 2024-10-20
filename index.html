@@ -68,12 +68,40 @@ body {
   align-items: center;
   background: #000; /* Initial background */
   min-height: 100vh;
+  position: relative;
+  overflow: hidden; /* Ensure nothing overflows the body */
   transition: background 0.5s ease; /* Smooth transition for background */
 }
 
-body:hover {
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); /* Background on hover */
+/* Create a hover area */
+body:hover::before {
+  content: '';
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: 300px; /* Define hover effect radius */
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8), transparent);
+  transition: background 0.5s ease;
+  pointer-events: none; /* Ensure it's non-interactive */
 }
+
+/* Smooth movement when hovering */
+body {
+  --x: 50%;
+  --y: 50%;
+  transition: background 0.5s ease; /* Smooth transition */
+}
+
+body:hover {
+  background: #000;
+}
+
+body:hover::before {
+  background: radial-gradient(circle, #00fffc 0%, transparent 70%);
+}
+
 
 
 .container span {
