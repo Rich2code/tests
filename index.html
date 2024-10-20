@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   
   <script>
@@ -169,6 +169,14 @@ h2 {
   font-size: 1em;
   color: #1f293a;
   font-weight: 600;
+  transition: 0.3s ease;
+}
+
+/* Hover effect for the login button */
+.btn:hover {
+  background-color: #fff;
+  color: #0d0d0d;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .signup-link {
@@ -187,6 +195,11 @@ h2 {
   text-decoration: underline;
 }
 
+/* Hover effect for the entire form (scales slightly) */
+.login-box:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
 
     /* -- YouTube Link Styles -- */
 
@@ -241,7 +254,6 @@ h2 {
       font-family: "Rubik", sans-serif;
       transition: color 600ms;
     }
-
 
   </style>
 
@@ -321,9 +333,5 @@ h2 {
   <span style="--i:49;"></span>
 </div>
   
-
-  <!--Social Liks codings below-->
-  
-
 </body>
 </html>
