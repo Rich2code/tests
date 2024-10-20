@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Page</title>
+  <style>
+    /* Simple color coding for the display */
+    .ip { color: blue; font-weight: bold; }
+    .time { color: green; font-weight: bold; }
+    .date { color: red; font-weight: bold; }
+  </style>
 </head>
 <body>
 
@@ -39,14 +45,38 @@
         const data = snapshot.val();
         if (data) {
           for (const key in data) {
+            const rawTimestamp = data[key].timestamp;
+            const formattedDateTime = formatTimestamp(rawTimestamp);
+
             const listItem = document.createElement('li');
-            listItem.textContent = `IP: ${data[key].ip}, Timestamp: ${data[key].timestamp}`;
+            listItem.innerHTML = `IP: <span class="ip">${data[key].ip}</span> 
+                                  TIME: <span class="time">${formattedDateTime.time}</span> 
+                                  DATE: <span class="date">${formattedDateTime.date}</span>`;
             ipList.appendChild(listItem);
           }
         } else {
           ipList.innerHTML = '<li>No IP addresses saved.</li>'; // Message when no IPs are found
         }
       });
+    }
+
+    // Function to format the timestamp into separate date and time
+    function formatTimestamp(timestamp) {
+      const dateObj = new Date(timestamp);
+      
+      // Extracting time in HH:MM:SS format
+      const hours = String(dateObj.getUTCHours()).padStart(2, '0');
+      const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(dateObj.getUTCSeconds()).padStart(2, '0');
+      const time = `${hours}:${minutes}:${seconds}`;
+      
+      // Extracting date in YYYY-MM-DD format
+      const year = dateObj.getUTCFullYear();
+      const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+      const day = String(dateObj.getUTCDate()).padStart(2, '0');
+      const date = `${year}-${month}-${day}`;
+      
+      return { time, date };
     }
 
     // Function to clear all IP addresses from Firebase
