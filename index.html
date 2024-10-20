@@ -1,389 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-  document.body.addEventListener('mousemove', function(e) {
-    let x = e.clientX / window.innerWidth * 100;
-    let y = e.clientY / window.innerHeight * 100;
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     
-    document.body.style.setProperty('--x', `${x}%`);
-    document.body.style.setProperty('--y', `${y}%`);
-  });
-</script>
+    <script>
+        // Your Firebase Configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCIH4PKs8KjlC74B21Lw5AuDM2TjUVdK94",
+            authDomain: "tests-8abd2.firebaseapp.com",
+            databaseURL: "https://tests-8abd2-default-rtdb.firebaseio.com",
+            projectId: "tests-8abd2",
+            storageBucket: "tests-8abd2.appspot.com",
+            messagingSenderId: "269771578530",
+            appId: "1:269771578530:web:f05f2db6786b88caca8bfb",
+            measurementId: "G-0G0JQ8H4QS"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-  
-  <script>
-    // Your Firebase Configuration
-    var firebaseConfig = {
-      apiKey: "AIzaSyCIH4PKs8KjlC74B21Lw5AuDM2TjUVdK94",
-      authDomain: "tests-8abd2.firebaseapp.com",
-      databaseURL: "https://tests-8abd2-default-rtdb.firebaseio.com",
-      projectId: "tests-8abd2",
-      storageBucket: "tests-8abd2.appspot.com",
-      messagingSenderId: "269771578530",
-      appId: "1:269771578530:web:f05f2db6786b88caca8bfb",
-      measurementId: "G-0G0JQ8H4QS"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+        // Function to save the IP address to Firebase
+        function saveIpToFirebase(ip) {
+            const timestamp = new Date().toISOString();
+            firebase.database().ref('userIPs').push({ ip: ip, timestamp: timestamp });
+        }
 
-    // Function to save the IP address to Firebase
-    function saveIpToFirebase(ip) {
-      const timestamp = new Date().toISOString();
-      firebase.database().ref('userIPs').push({ ip: ip, timestamp: timestamp });
-    }
+        // Fetch the user's public IP address using ipify API
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                saveIpToFirebase(data.ip);
+            });
 
-    // Fetch the user's public IP address using ipify API
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        saveIpToFirebase(data.ip);
-      })
-  </script>
-  <meta charset="UTF-8">
-  <title>@codewith_muhilan</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        // Update mouse position for hover effect
+        document.addEventListener('mousemove', (e) => {
+            document.body.style.setProperty('--x', `${e.clientX}px`);
+            document.body.style.setProperty('--y', `${e.clientY}px`);
+        });
+    </script>
+    <meta charset="UTF-8">
+    <title>@codewith_muhilan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
-* {
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins";
-  box-sizing: border-box;
-}
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #000;
-  min-height: 100vh;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins";
+            box-sizing: border-box;
+        }
 
-.container {
-  position: relative;
-  width: 256px;
-  height: 256px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden; /* Ensure nothing overflows the body */
+            transition: background 0.5s ease; /* Smooth transition for background */
+        }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #000; /* Initial background */
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden; /* Ensure nothing overflows the body */
-  transition: background 0.5s ease; /* Smooth transition for background */
-}
+        /* Create a hover area */
+        body::before {
+            content: '';
+            position: absolute;
+            top: var(--y);
+            left: var(--x);
+            width: 300px; /* Define hover effect radius */
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 70%, rgba(255, 255, 255, 0.8) 100%);
+            transform: translate(-50%, -50%); /* Center the effect */
+            transition: background 0.5s ease; /* Smooth transition */
+            pointer-events: none; /* Ensure it's non-interactive */
+        }
 
-/* Create a hover area */
-body:hover::before {
-  content: '';
-  position: absolute;
-  top: var(--y);
-  left: var(--x);
-  width: 300px; /* Define hover effect radius */
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8), transparent);
-  transition: background 0.5s ease;
-  pointer-events: none; /* Ensure it's non-interactive */
-}
+        body:hover::before {
+            background: radial-gradient(circle, rgba(0, 255, 252, 0.7) 0%, transparent 70%);
+        }
 
-/* Smooth movement when hovering */
-body {
-  --x: 50%;
-  --y: 50%;
-  transition: background 0.5s ease; /* Smooth transition */
-}
+        .container {
+            position: relative;
+            width: 256px;
+            height: 256px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-body:hover {
-  background: #000;
-}
+        .container span {
+            position: absolute;
+            left: 0;
+            width: 32px;
+            height: 5px;
+            background: #2c4766;
+            border-radius: 8px;
+            transform-origin: 128px;
+            transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+            animation: animateBlink 1s linear infinite;
+            animation-delay: calc(var(--i) * (3s / 50));
+        }
 
-body:hover::before {
-  background: radial-gradient(circle, #00fffc 0%, transparent 70%);
-}
+        @keyframes animateBlink {
+            0% {
+                background: #00fffc;
+            }
 
+            25% {
+                background: #2c4766;
+            }
+        }
 
+        .login-box {
+            position: absolute;
+            width: 400px;
+        }
 
-.container span {
-  position: absolute;
-  left: 0;
-  width: 32px;
-  height: 5px;
-  background: #2c4766;
-  border-radius: 8px;
-  transform-origin: 128px;
-  transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
-  animation: animateBlink 1s linear infinite;
-  animation-delay: calc(var(--i) * (3s / 50));
-}
+        .login-box form {
+            width: 100%;
+            padding: 0 50px;
+        }
 
-@keyframes animateBlink {
-  0% {
-    background: #00fffc;
-  }
+        h2 {
+            font-size: 2em;
+            color: #00fffc;
+            text-align: center;
+        }
+        
+        .input-box {
+            position: relative;
+            margin: 25px 0;
+        }
 
-  25% {
-    background: #2c4766;
-  }
-}
+        .input-box input {
+            width: 100%;
+            height: 50px;
+            background: transparent;
+            border: 2px solid #2c4766;
+            outline: none;
+            border-radius: 40px;
+            font-size: 1em;
+            color: #fff;
+            padding: 0 20px;
+            transition: 0.5s;
+        }
 
-.login-box {
-  position: absolute;
-  width: 400px;
-}
+        .input-box input:focus,
+        .input-box input:valid {
+            border-color: #00fffc;
+        }
 
-.login-box form {
-  width: 100%;
-  padding: 0 50px;
-}
+        .input-box label {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            font-size: 1em;
+            color: #fff;
+            pointer-events: none;
+            transition: 0.5s ease;
+        }
 
-h2 {
-  font-size: 2em;
-  color: #00fffc;
-  text-align: center;
-}
-.input-box {
-  position: relative;
-  margin: 25px 0;
-}
+        .input-box input:focus ~ label,
+        .input-box input:valid ~ label {
+            top: 1px;
+            font-size: 0.8em;
+            background-color: #1f293a;
+            padding: 0 6px;
+            color: #00fffc;
+        }
 
-.input-box input {
-  width: 100%;
-  height: 50px;
-  background: transparent;
-  border: 2px solid #2c4766;
-  outline: none;
-  border-radius: 40px;
-  font-size: 1em;
-  color: #fff;
-  padding: 0 20px;
-  transition: 0.5s;
-}
+        .forgot-password {
+            margin: -15px 0 10px;
+            text-align: center;
+        }
 
-.input-box input:focus,
-.input-box input:valid {
-  border-color: #00fffc;
-}
+        .forgot-password a {
+            font-size: 0.85em;
+            color: #fff;
+            text-decoration: none;
+        }
 
-.input-box label {
-  position: absolute;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-  font-size: 1em;
-  color: #fff;
-  pointer-events: none;
-  transition: 0.5s ease;
-}
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
 
-.input-box input:focus ~ label,
-.input-box input:valid ~ label {
-  top: 1px;
-  font-size: 0.8em;
-  background-color: #1f293a;
-  padding: 0 6px;
-  color: #00fffc;
-}
+        .btn {
+            width: 100%;
+            height: 45px;
+            border-radius: 45px;
+            background: #00fffc;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #1f293a;
+            font-weight: 600;
+        }
 
-.forgot-password {
-  margin: -15px 0 10px;
-  text-align: center;
-}
+        .signup-link {
+            margin: 20px 0 10px;
+            text-align: center;
+        }
 
-.forgot-password a {
-  font-size: 0.85em;
-  color: #fff;
-  text-decoration: none;
-}
+        .signup-link a {
+            font-size: 1em;
+            color: #00fffc;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-.forgot-password a:hover {
-  text-decoration: underline;
-}
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
 
-.btn {
-  width: 100%;
-  height: 45px;
-  border-radius: 45px;
-  background: #00fffc;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  font-size: 1em;
-  color: #1f293a;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
+        /* -- YouTube Link Styles -- */
 
-/* Hover effect for the login button */
-.btn:hover {
-  background-color: #fff;
-  color: #0d0d0d;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-}
+        #source-link {
+            top: 60px;
+        }
 
-.signup-link {
-  margin: 20px 0 10px;
-  text-align: center;
-}
+        #source-link>i {
+            color: rgb(94, 106, 210);
+        }
 
-.signup-link a {
-  font-size: 1em;
-  color: #00fffc;
-  text-decoration: none;
-  font-weight: 600;
-}
+        #yt-link {
+            top: 10px;
+        }
 
-.signup-link a:hover {
-  text-decoration: underline;
-}
+        #yt-link>i {
+            color: rgb(219, 31, 106);
+        }
 
-/* Hover effect for the entire form (scales slightly) */
-.login-box:hover {
-  transform: scale(1.05);
-  transition: transform 0.3s ease;
-}
+        .meta-link {
+            align-items: center;
+            backdrop-filter: blur(3px);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: inline-flex;
+            gap: 5px;
+            left: 10px;
+            padding: 10px 20px;
+            position: fixed;
+            text-decoration: none;
+            transition: background-color 600ms, border-color 600ms;
+            z-index: 10000;
+        }
 
-    /* -- YouTube Link Styles -- */
+        .meta-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-    #source-link {
-      top: 60px;
-    }
+        .meta-link>i,
+        .meta-link>span {
+            height: 20px;
+            line-height: 20px;
+        }
 
-    #source-link>i {
-      color: rgb(94, 106, 210);
-    }
-
-    #yt-link {
-      top: 10px;
-    }
-
-    #yt-link>i {
-      color: rgb(219, 31, 106);
-
-    }
-
-    .meta-link {
-      align-items: center;
-      backdrop-filter: blur(3px);
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      display: inline-flex;
-      gap: 5px;
-      left: 10px;
-      padding: 10px 20px;
-      position: fixed;
-      text-decoration: none;
-      transition: background-color 600ms, border-color 600ms;
-      z-index: 10000;
-    }
-
-    .meta-link:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .meta-link>i,
-    .meta-link>span {
-      height: 20px;
-      line-height: 20px;
-    }
-
-    .meta-link>span {
-      color: white;
-      font-family: "Rubik", sans-serif;
-      transition: color 600ms;
-    }
-
-  </style>
-
+        .meta-link>span {
+            color: white;
+            font-family: "Rubik", sans-serif;
+            transition: color 600ms;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-  <div class="login-box">
-    <h2>Login</h2>
-    <form action="#">
-      <div class="input-box">
-        <input type="email" required>
-        <label>Email</label>
-      </div>
-      <div class="input-box">
-        <input type="password" required>
-        <label>Password</label>
-      </div>
-      <div class="forgot-password">
-        <a href="#">Forgot Password?</a>
-      </div>
-      <button type="submit" class="btn">Login</button>
-      <div class="signup-link">
-        <a href="#">Signup</a>
-      </div>
-    </form>
-  </div>
-
-  <span style="--i:0;"></span>
-  <span style="--i:1;"></span>
-  <span style="--i:2;"></span>
-  <span style="--i:3;"></span>
-  <span style="--i:4;"></span>
-  <span style="--i:5;"></span>
-  <span style="--i:6;"></span>
-  <span style="--i:7;"></span>
-  <span style="--i:8;"></span>
-  <span style="--i:9;"></span>
-  <span style="--i:10;"></span>
-  <span style="--i:11;"></span>
-  <span style="--i:12;"></span>
-  <span style="--i:13;"></span>
-  <span style="--i:14;"></span>
-  <span style="--i:15;"></span>
-  <span style="--i:16;"></span>
-  <span style="--i:17;"></span>
-  <span style="--i:18;"></span>
-  <span style="--i:19;"></span>
-  <span style="--i:20;"></span>
-  <span style="--i:21;"></span>
-  <span style="--i:22;"></span>
-  <span style="--i:23;"></span>
-  <span style="--i:24;"></span>
-  <span style="--i:25;"></span>
-  <span style="--i:26;"></span>
-  <span style="--i:27;"></span>
-  <span style="--i:28;"></span>
-  <span style="--i:29;"></span>
-  <span style="--i:30;"></span>
-  <span style="--i:31;"></span>
-  <span style="--i:32;"></span>
-  <span style="--i:33;"></span>
-  <span style="--i:34;"></span>
-  <span style="--i:35;"></span>
-  <span style="--i:36;"></span>
-  <span style="--i:37;"></span>
-  <span style="--i:38;"></span>
-  <span style="--i:39;"></span>
-  <span style="--i:40;"></span>
-  <span style="--i:41;"></span>
-  <span style="--i:42;"></span>
-  <span style="--i:43;"></span>
-  <span style="--i:44;"></span>
-  <span style="--i:45;"></span>
-  <span style="--i:46;"></span>
-  <span style="--i:47;"></span>
-  <span style="--i:48;"></span>
-  <span style="--i:49;"></span>
+    <div class="login-box">
+        <h2>Login</h2>
+        <form action="#">
+            <div class="input-box">
+                <input type="email" required>
+                <label>Email</label>
+            </div>
+            <div class="input-box">
+                <input type="password" required>
+                <label>Password</label>
+            </div>
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="signup-link">
+                <span>Don't have an account? <a href="#">Signup</a></span>
+            </div>
+        </form>
+    </div>
 </div>
-  
+
+<a class="meta-link" id="source-link" href="https://github.com/c0d3t0wn" target="_blank">
+    <i class="fas fa-code"></i>
+    <span>Source Code</span>
+</a>
+
+<a class="meta-link" id="yt-link" href="https://www.youtube.com/channel/UClu_oEXr1At4D9BlxD2vH2g" target="_blank">
+    <i class="fab fa-youtube"></i>
+    <span>YouTube Channel</span>
+</a>
 </body>
 </html>
